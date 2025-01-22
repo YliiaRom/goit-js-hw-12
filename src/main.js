@@ -13,6 +13,7 @@ const form = document.querySelector('.form');
 const btnSubmit = document.querySelector('button');
 const galleryList = document.querySelector('.gallery-list');
 const titleGallery = document.querySelector('.title-gallery');
+const btnLoad = document.querySelector('.btn-load');
 
 const lightbox = new SimpleLightbox('.gallery a', {
   captions: true,
@@ -46,15 +47,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+let pageValue = 1;
+let inputValue = '';
 
+form.addEventListener('submit', async event => {
+  try {
 
-
-form.addEventListener('submit', event => {
   event.preventDefault();
+
   clearListGallery(galleryList);
 
+
   //input value
-const inputValue = form.elements.text.value.trim();
+ inputValue = form.elements.text.value.trim();
 
 //input проверка
 if(inputValue === '') {
@@ -64,72 +69,133 @@ if(inputValue === '') {
     position: 'topLeft'
 });
 form.elements.text.value = "";
+btnLoad.classList.add('js-hidden');
   return;
 }
+
 //проверка на символы
 const standartSimbols = /[^a-zA-Z0-9]/;
 if(standartSimbols.test(inputValue)) {
+  btnLoad.classList.add('js-hidden');
   iziToast.warning({
     title: 'Caution',
     message: 'Only letters and numbers are allowed for input.',
     position: 'topLeft',
 });
+
 //чистка input
 form.elements.text.value = "";
 return;
 }
 
+
+//loader
 const loader = createLoader();
 renderLoader(galleryList, loader);
 
 
-//fetch + inputValue
-fetchGalleryPromise(inputValue).then(date => {
+ 
+    const resultFetch = await fetchGalleryPromise(inputValue, pageValue);
+    console.log(resultFetch.data);
+     const arrGallery = resultFetch.data.hits;
+     console.log(arrGallery);
 
-//проверка на пустой массив - если ввели несуществующее слово
-if(date.total === 0) {
-  const loaderObj = document.querySelector('.loader');
-  if (loaderObj) loaderObj.remove();
-  iziToast.info({
-    title: 'Sorry,',
-    message: 'there are no images matching your search query. Please try again!',
-    position: 'center',
-});
-form.elements.text.value = '';
-return;
-}
-
-
-//распаковать промис
-const promiseGallery = date.hits;
-
-//перебрать и сделать новый объект - join(объединить в рядок с обозн символом)
-const galleryTemplate = promiseGallery.map(el => createGallery(el)).join('');
-
-
-//удалить лоадер
-const loaderObj = document.querySelector('.loader');
-loaderObj.remove();
-// добавить в html
-renderGallery(galleryList, galleryTemplate); 
-
-lightbox.refresh();
-
-//чистка input
-form.elements.text.value = '';
-})
-.catch(err => {
-  
-  const loaderObj = document.querySelector('.loader');
-  if (loaderObj) {
-    loaderObj.remove();
-  }
-  iziToast.warning({
-    title: 'Sorry,',
-    message: 'There was an error fetching the images. Please try again!',
-    position: 'center',
+  //проверка на пустой массив - если ввели несуществующее слово
+  if(resultFetch.data.total === 0) {
+    const loaderObj = document.querySelector('.loader');
+    if (loaderObj) loaderObj.remove();
+    iziToast.info({
+      title: 'Sorry,',
+      message: 'there are no images matching your search query. Please try again!',
+      position: 'center',
   });
+  form.elements.text.value = '';
+  btnLoad.classList.add('js-hidden');
+  return;
+  }
+  
+    
+    //перебрать и сделать новый объект - join(объединить в рядок с обозн символом)
+    const galleryTemplate = arrGallery.map(el => createGallery(el)).join('');
+  
+        //удалить лоадер
+        const loaderObj = document.querySelector('.loader');
+        loaderObj.remove();
+
+        // добавить в html
+        renderGallery(galleryList, galleryTemplate); 
+  
+    lightbox.refresh();
+if(resultFetch.data.total > 1) {
+  btnLoad.classList.remove('js-hidden');
+}
+  
+    
+    //чистка input
+    form.elements.text.value = '';
+    
+  
+  //fetch + inputValue
+  
+  } catch(error) {
+    
+    const loaderObj = document.querySelector('.loader');
+    if (loaderObj) {
+      loaderObj.remove();
+    }
+    iziToast.warning({
+      title: 'Sorry,',
+      message: 'There was an error fetching the images. Please try again!',
+      position: 'center',
+    });
+  
+  };
 
 });
 
-});
+
+const createMorePhoto = async () => {
+
+ 
+  pageValue += 1;
+
+  try {
+    const resultLoadPromise = await fetchGalleryPromise(inputValue, pageValue);
+
+    const arrGallery = resultLoadPromise.data.hits;
+console.log(arrGallery);
+
+    //проверка на пустой массив - если ввели несуществующее слово
+  if(resultLoadPromise.data.total === 0) {
+    const loaderObj = document.querySelector('.loader');
+    if (loaderObj) loaderObj.remove();
+    iziToast.info({
+      title: 'Sorry,',
+      message: 'there are no images matching your search query. Please try again!',
+      position: 'center',
+  });
+  form.elements.text.value = '';
+  btnLoad.classList.add('js-hidden');
+  return;
+  }
+  
+    
+    //перебрать и сделать новый объект - join(объединить в рядок с обозн символом)
+    const galleryTemplateMore = arrGallery.map(el => createGallery(el)).join('');
+  console.log(galleryTemplateMore);
+        //удалить лоадер
+        const loaderObj = document.querySelector('.loader');
+        loaderObj.remove();
+
+        // добавить в html
+        renderGallery(galleryList, galleryTemplateMore);
+  
+    lightbox.refresh();
+
+ console.log(arrGallery);
+  } catch (arr) {
+
+  }
+
+}
+btnLoad.addEventListener('click', createMorePhoto);

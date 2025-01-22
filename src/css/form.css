@@ -71,6 +71,7 @@ letter-spacing: 0.64px;
 }
 
 /* btn */
+.btn-load,
 .btn {
 line-height: 1.5; /* 150% */
 letter-spacing: 0.64px;
@@ -86,8 +87,16 @@ gap: 10px;
   color: #FFF;
   transition: background 0.3s;
 }
+.btn-load:hover,
 .btn:hover {
   background: #6C8CFF;
 }
 .js-btn {
+}
+
+.btn-load {
+  margin: 0 auto;
+}
+.js-hidden {
+  display: none;
 }

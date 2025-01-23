@@ -1,7 +1,7 @@
 //запрос-Promis
 
 import axios from "axios";
-
+import { createGallery } from "./render-functions";
 
 
 export const fetchGalleryPromise = (inputValue, pageValue) => {
@@ -28,6 +28,15 @@ const searchParams = {
  return axios.get(`${API_URL}`, searchParams);
 
 }
+// созд галереи 
+export const createGalleryObj = (arrPromise) => {
 
+  const arrGallery = arrPromise.data.hits;
+
+    //перебрать и сделать новый объект - join(объединить в рядок с обозн символом)
+    const galleryTemplate = arrGallery.map(el => createGallery(el)).join('');
+
+return galleryTemplate;
+}
 
 

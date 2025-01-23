@@ -1,3 +1,5 @@
+
+
 //создание html объекта для вставки
 
 export function createGallery({largeImageURL, webformatURL, tags, likes, views, comments, downloads}) {
@@ -29,7 +31,7 @@ export function createGallery({largeImageURL, webformatURL, tags, likes, views, 
 </li>
   `;}
 
-  //чистка
+  //чистка/
 export function clearListGallery(galleryList) {
   galleryList.innerHTML = '';
   }
@@ -42,7 +44,7 @@ export function renderGallery(galleryList, obj) {
 
 
 
-//loader
+//loader/
 export const createLoader = () => {
   return `<span class="loader"></span>`;
 }
@@ -50,6 +52,19 @@ export const renderLoader = (galleryList, obj) => {
   galleryList.insertAdjacentHTML('afterend', obj);
 }
 
+export const firework = (e) => {
+  document.querySelectorAll('.smoke div').forEach((div => {
+    let x = div.offsetLeft - e.pageX;
+    let y = div.offsetTop - e.pageY;
 
-//
+    let dist = Math.sqrt(x * x + y * y);
+    let score = Math.exp(dist * -0.01);
+    div.style.transform = "scale("+ score * 4 +") rotate("+ score * 180 +"deg)";
+    div.style.opacity = score * 2;
+    let randomNum = Math.random() * 720;
+    div.style.filter = `hue-rotate(${randomNum}deg)`;
+  }))
+}
+
+
 

@@ -3,7 +3,7 @@
 import axios from "axios";
 import { createGallery } from "./render-functions";
 
-
+//при submit/
 export const fetchGalleryPromise = (inputValue, pageValue) => {
   //создание ключей и параметров для запросов (fetch)
 //данные ключей

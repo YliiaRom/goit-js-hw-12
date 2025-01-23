@@ -10,10 +10,9 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 
 
 const form = document.querySelector('.form');
-const btnSubmit = document.querySelector('button');
 const galleryList = document.querySelector('.gallery-list');
-const titleGallery = document.querySelector('.title-gallery');
 const btnLoad = document.querySelector('.btn-load');
+let smoke = document.getElementById('smoke');
 
 const lightbox = new SimpleLightbox('.gallery a', {
   captions: true,
@@ -22,7 +21,7 @@ const lightbox = new SimpleLightbox('.gallery a', {
 
 
 
-import { createGallery } from "./js/render-functions/";
+
 import { clearListGallery } from "./js/render-functions";
 import { renderGallery } from "./js/render-functions";
 
@@ -33,37 +32,40 @@ import { createGalleryObj } from "./js/pixabay-api";
 import { createLoader } from "./js/render-functions";
 import { renderLoader } from "./js/render-functions";
 
+//firework
+import { firework } from "./js/render-functions";
+
 
 
 //title decor
 document.addEventListener('DOMContentLoaded', () => {
   const titleGallery = document.querySelector('.title-gallery');
   const subTitle = document.querySelector('.sub-title');
-  if (subTitle) {
-    let shadow = '';
-    for (let i = 0; i < 9; i++) {
-      shadow += `${-i}px ${i}px 0 #d9d9d9` + (i < 8 ? ',' : '');
-    }
-    subTitle.style.textShadow = shadow; 
-  } else {
-    console.error('Элемент с классом .title не найден!');
+  try {
+
+    if (subTitle) {
+      let shadow = '';
+      for (let i = 0; i < 9; i++) {
+        shadow += `${-i}px ${i}px 0 #d9d9d9` + (i < 8 ? ',' : '');
+      }
+      subTitle.style.textShadow = shadow; 
+    } 
+  
+    if (titleGallery) {
+      let shadow = '';
+      for (let i = 0; i < 15; i++) {
+        shadow += `${-i}px ${i}px 0 #d9d9d9` + (i < 14 ? ',' : '');
+      }
+      titleGallery.style.textShadow = shadow; 
+    } 
+  } catch(error) {
+    let err = error;
   }
 
-  if (titleGallery) {
-    let shadow = '';
-    for (let i = 0; i < 15; i++) {
-      shadow += `${-i}px ${i}px 0 #d9d9d9` + (i < 14 ? ',' : '');
-    }
-    titleGallery.style.textShadow = shadow; 
-  } else {
-    console.error('Элемент с классом .title не найден!');
-  }
 });
 
 let pageValue = 1;
 let inputValue = '';
-
-
 
 
 form.addEventListener('submit', async event => {
@@ -171,10 +173,6 @@ renderLoader(galleryList, loader);
       btnLoad.classList.add('js-hidden');
     }
     
-
-  // if (btnLoad.classList.contains('')) {
-
-  // }
   
     
     //чистка input
@@ -204,10 +202,6 @@ const createMorePhoto = async (event) => {
   try {
     event.preventDefault();
 
-
-
-  
- 
   pageValue += 1;
 
   //создание loader
@@ -224,6 +218,12 @@ btnLoad.insertAdjacentElement('afterend', loaderBtnLoad);
     //проверка на пустой массив - если ввели несуществующее слово
     const totalObj = resultLoadPromise.data.totalHits;
     const hitsArray = resultLoadPromise.data.hits;
+
+
+    //конец фото= прятать кнопку
+    if (pageValue > totalObj) {
+      btnLoad.classList.add('js-hidden');
+    }
   
     if(hitsArray.length === 0) {
       btnLoad.classList.add('js-hidden');
@@ -233,6 +233,7 @@ btnLoad.insertAdjacentElement('afterend', loaderBtnLoad);
         position: 'bottomCenter',
     });
     }
+
    
 
     if(totalObj === 0) {
@@ -253,9 +254,6 @@ btnLoad.insertAdjacentElement('afterend', loaderBtnLoad);
   
     const galleryTemplate = createGalleryObj(resultLoadPromise);
 
-        //удалить лоадер
-        // const loaderObj = document.querySelector('.loader');
-        // loaderObj.remove();
 
         // добавить в html
 renderGallery(galleryList, galleryTemplate);
@@ -273,7 +271,7 @@ loaderBtnLoad.remove()
      const rectHeight = liElement.getBoundingClientRect().height * 2 + 80 + 50;
     
      window.scrollBy({
-       top: rectHeight, // Прокрутка на высоту двух карточек
+       top: rectHeight, 
        left: 0,
        behavior: "smooth",
      });
@@ -290,6 +288,28 @@ loaderBtnLoad.remove()
 
 }
 btnLoad.addEventListener('click', createMorePhoto);
-// if(!li === undefined) {
 
-// }
+
+//smoke
+ function createSmoke(e) {
+  let elem = document.createElement('div');
+  elem.classList.add('elem');
+  
+  elem.style.left = `${e.clientX}px`;
+  elem.style.top = `${e.clientY}px`;
+
+  smoke.appendChild(elem);
+ 
+  setTimeout(() => {
+    elem.remove();
+}, 3000);
+   
+}
+document.addEventListener('mousemove', createSmoke);
+
+let section = document.querySelector('.spawner');
+for (let i = 0; i < 600 ; i ++) {
+  let div =  document.createElement('div');
+  smoke.appendChild(div);
+}
+document.addEventListener("mousemove", firework);

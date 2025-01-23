@@ -11,7 +11,7 @@
   width: 10px;
   height: 10px;
 
-  background: radial-gradient(circle, rgb(64, 249, 2) 0%, rgba(225, 22, 33, 0) 80%);
+  background: radial-gradient(circle, rgba(102, 242, 2, 1) 0%, rgba(225, 22, 33, 0) 80%);
   pointer-events: none;
   animation: ripple 1s ease-out forwards
 }

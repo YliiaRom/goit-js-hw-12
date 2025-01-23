@@ -116,6 +116,11 @@ renderLoader(galleryList, loader);
  
     const resultFetch = await fetchGalleryPromise(inputValue, pageValue);
 
+    const lengthData = resultFetch.data.hits.length;
+    if (lengthData === 0) {
+      btnLoad.classList.add('js-hidden');
+    }
+
     const totalObj = resultFetch.data.totalHits;
     const hitsArray = resultFetch.data.hits;
   
@@ -179,6 +184,7 @@ renderLoader(galleryList, loader);
     form.elements.text.value = '';
     
   
+btnLoad.addEventListener('click', createMorePhoto);
   //fetch + inputValue
   
   } catch(error) {
@@ -214,6 +220,24 @@ btnLoad.insertAdjacentElement('afterend', loaderBtnLoad);
     const resultLoadPromise = await fetchGalleryPromise(inputValue, pageValue);
 
 
+    //Прячу кнопку если пустой массив 55.50
+    const lengthData = resultLoadPromise.data.hits.length;
+if (lengthData === 0) {
+  btnLoad.classList.add('js-hidden');
+  btnLoad.removeEventListener('click', createMorePhoto);
+  loaderBtnLoad.remove();
+  iziToast.info({
+    title: "We're sorry,",
+    message: "but you've reached the end of search results.",
+    position: 'bottomCenter',
+});
+  return;
+}
+if (lengthData < 15) {
+  btnLoad.classList.add('js-hidden');
+}
+
+
   
     //проверка на пустой массив - если ввели несуществующее слово
     const totalObj = resultLoadPromise.data.totalHits;
@@ -221,9 +245,9 @@ btnLoad.insertAdjacentElement('afterend', loaderBtnLoad);
 
 
     //конец фото= прятать кнопку
-    if (pageValue > totalObj) {
-      btnLoad.classList.add('js-hidden');
-    }
+    // if (pageValue > totalObj) {
+    //   btnLoad.classList.add('js-hidden');
+    // }
   
     if(hitsArray.length === 0) {
       btnLoad.classList.add('js-hidden');
@@ -251,7 +275,7 @@ btnLoad.insertAdjacentElement('afterend', loaderBtnLoad);
     if (totalObj < 15) {
       btnLoad.classList.add('js-hidden');
     }
-  
+  // созд галлереи
     const galleryTemplate = createGalleryObj(resultLoadPromise);
 
 
@@ -268,7 +292,7 @@ loaderBtnLoad.remove()
    // Прокрутка страницы
    const liElement = document.querySelector('.gallery-item');
    if (liElement) {
-     const rectHeight = liElement.getBoundingClientRect().height * 2 + 80 + 50;
+     const rectHeight = liElement.getBoundingClientRect().height * 2;
     
      window.scrollBy({
        top: rectHeight, 
@@ -287,7 +311,9 @@ loaderBtnLoad.remove()
   }
 
 }
-btnLoad.addEventListener('click', createMorePhoto);
+
+
+
 
 
 //smoke

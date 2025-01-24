@@ -184,7 +184,7 @@ renderLoader(galleryList, loader);
     form.elements.text.value = '';
     
   
-btnLoad.addEventListener('click', createMorePhoto);
+
   //fetch + inputValue
   
   } catch(error) {
@@ -312,7 +312,7 @@ loaderBtnLoad.remove()
 
 }
 
-
+btnLoad.addEventListener('click', createMorePhoto);
 
 
 
